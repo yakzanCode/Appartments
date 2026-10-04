@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Notebook Preview</title>
+<style>
+:root{--bg:#f6f1e7;--card:#fff;--ink:#2b2418;--mute:#7a6f5c;--green:#2e7d4f;--red:#c0392b;--amber:#d98e04;--line:#e4dccb;--accent:#1f5f5b;--soft:#eef3f2;--page:#d9d2c0;--blue:#2f6690}
+[data-theme=dark]{--bg:#121618;--card:#1d2427;--ink:#ecebe6;--mute:#a1abae;--green:#4fc07f;--red:#ef6f60;--amber:#f0b73c;--line:#2e383c;--accent:#2a8a84;--soft:#26323a;--page:#000;--blue:#4b8fbd}
+*{box-sizing:border-box;margin:0}
+body{font-family:system-ui,"Segoe UI",Tahoma,sans-serif;background:var(--page);color:var(--ink);display:flex;flex-direction:column;align-items:center;font-size:18px}
+.dl{display:block;width:100%;max-width:420px;box-sizing:border-box;text-align:center;background:#d98e04;color:#fff;font-weight:700;padding:12px;text-decoration:none;font-size:18px}
+#app{width:100%;max-width:420px;height:calc(100vh - 48px);background:var(--bg);display:flex;flex-direction:column;position:relative}
+header{background:var(--accent);color:#fff;padding:14px 16px;font-size:21px;font-weight:700;display:flex;align-items:center;gap:8px}
+header .t{flex:1}
+header button{background:rgba(255,255,255,.18);border:0;color:#fff;font-size:18px;border-radius:10px;padding:6px 11px;font-weight:700}
+main{flex:1;overflow-y:auto;padding:14px}
+nav{display:flex;background:var(--card);border-top:2px solid var(--line)}
+nav button{flex:1;border:0;background:none;padding:9px 2px;font-size:13px;color:var(--mute)}
+nav button span{display:block;font-size:25px}
+nav button.on{color:var(--accent);font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--line);margin-bottom:10px}
+.stat .n{font-size:26px;font-weight:800}.stat .l{font-size:14px;color:var(--mute)}
+.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
+h2{font-size:20px;margin:14px 0 8px}
+.btn{display:block;width:100%;text-align:center;padding:14px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-size:18px;font-weight:700;margin:6px 0;cursor:pointer}
+.btn.alt{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);gap:10px}
+.row:last-child{border:0}
+.tap{cursor:pointer}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
+.paid{background:var(--green)}.part{background:var(--amber)}.unpaid{background:var(--red)}.hh{background:var(--blue)}
+.bar{height:12px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--green)}
+table{width:100%;border-collapse:collapse;font-size:16px}td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:start}
+.note{font-size:13px;color:var(--mute);text-align:center;padding:8px}
+.toast{position:absolute;bottom:84px;left:20px;right:20px;background:#222;color:#fff;padding:14px;border-radius:12px;text-align:center;display:none}
+.sub{color:var(--mute);font-size:15px}
+.people{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.people span{background:var(--soft);border-radius:10px;padding:6px 10px;font-size:15px}
+.chip{display:inline-block;padding:9px 14px;border-radius:20px;background:var(--card);border:2px solid var(--line);font-size:15px;margin:0 0 8px 6px}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--soft)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph b{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.65);color:#fff;border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;font-size:14px;cursor:pointer}
+.empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:18px 0;font-size:15px}
+.av{width:46px;height:46px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;overflow:hidden;flex:none}
+.av.big{width:96px;height:96px;font-size:40px;margin:0 auto 10px}
+.av img{width:100%;height:100%;object-fit:cover}
+.tl{display:flex;gap:12px;align-items:center}
+input.f{width:100%;padding:12px;font-size:18px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);margin:4px 0 10px}
+label.lb{font-size:14px;color:var(--mute)}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+<a class="dl" href="install.html">⬇️ تحميل التطبيق للأندرويد · Download the Android app</a>
+<div id="app">
+  <header><button id="back" style="display:none" onclick="goBack()">→</button><span class="t" id="title"></span><button onclick="toggleTheme()" id="thm">🌙</button><button onclick="toggleLang()" id="lng">EN</button></header>
+  <main id="main"></main>
+  <nav id="nav"></nav>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const AR={
+'Home':'الرئيسية','Rentals':'الإيجارات','Rent':'الإيجار','For Others':'لآخرين','More':'المزيد','My Rentals':'إيجاراتي','Collected for Others':'محصّل لآخرين',
+'Rented units':'وحدات مؤجرة','People living in them':'عدد الساكنين','Rent this month':'إيجار هذا الشهر','Collected':'المحصّل','Not paid yet':'غير مدفوع بعد','Old debts':'ديون قديمة','To hand over':'للتسليم','Maintenance':'الصيانة','open':'مفتوحة',
+'Quick Actions':'إجراءات سريعة','Add Rent Payment':'إضافة دفعة إيجار','Add Debt':'إضافة دين','Record Handover':'تسجيل تسليم',
+'Sample data only. Family units are not listed. Rent collected for others is not counted in "Rent this month".':'بيانات تجريبية فقط. وحدات العائلة غير معروضة. الإيجار المحصّل لآخرين لا يُحسب ضمن "إيجار هذا الشهر".',
+'Paid':'مدفوع','Partial':'جزئي','Unpaid':'غير مدفوع','Add rental unit':'إضافة وحدة للإيجار','October 2026':'أكتوبر 2026','September':'سبتمبر','Year':'السنة','of':'من','Left':'المتبقي','Done':'تم','Add payment':'إضافة دفعة','for':'لأجل',
+'Handed over':'المسلّم','Remaining':'المتبقي','Record handover':'تسجيل تسليم','History':'السجل','Month':'الشهر','Amount':'المبلغ','For':'لأجل','January':'يناير','February':'فبراير','March':'مارس','No one':'لا أحد',
+'Changing who it is collected for never changes past months.':'تغيير الشخص المحصَّل له لا يغيّر الأشهر السابقة.','Add person':'إضافة شخص',
+'Tenants':'المستأجرون','Building layout':'مخطط المبنى','Debts':'الديون','Expenses':'المصاريف','Reports':'التقارير','Settings':'الإعدادات','Search tenant, phone, unit…':'🔍 بحث عن مستأجر أو رقم أو وحدة…',
+'Who lives here':'من يسكن هنا','Type':'النوع','Total people':'عدد الأشخاص','Change residents':'تغيير الساكنين','Tenant / Contact':'المستأجر / جهة الاتصال','Name':'الاسم','Phone':'الهاتف','Phone 2':'هاتف ثانٍ',
+'Monthly':'شهرياً','This month':'هذا الشهر','Old debt':'دين قديم','Collected for':'محصّل لأجل','Edit':'تعديل','Room photos':'صور الغرفة','No photos yet':'لا توجد صور بعد','Add photos':'إضافة صور','Open profile':'عرض الملف الشخصي',
+'Family':'عائلة','Men':'شباب','Women':'نساء','Father':'أب','Mother':'أم','Sons':'أبناء','Daughters':'بنات',
+'Ground Floor':'الطابق الأرضي','First Floor':'الطابق الأول','Second Floor':'الطابق الثاني','Third Floor':'الطابق الثالث','Roof':'السطح',
+'Building 1':'مبنى 1','Main Building':'المبنى الرئيسي','Building Next to the Garden':'المبنى المجاور للحديقة','Building 4':'مبنى 4',
+'Rented house':'بيت مؤجر',"House before Grandmother's":'البيت قبل بيت الجدة','North':'شمال','Middle':'وسط','Right':'يمين','Near Stairs':'قرب الدرج','Rented unit':'وحدة مؤجرة','House 1':'بيت 1','House 2':'بيت 2',
+"Father's shop":'محل الوالد',"Uncle's house":'بيت العم',"Cousin's house":'بيت ابن العم',"Grandmother's house":'بيت الجدة','Family house':'بيت العائلة',"Father's house":'بيت الوالد','Not owned by us':'غير مملوك لنا','Not a living unit':'ليس وحدة سكنية','family':'عائلة',
+'Kept aside for later (for example a 3D view). Not used in daily screens.':'محفوظ جانباً لاستخدام لاحق (مثل العرض ثلاثي الأبعاد). غير مستخدم في الشاشات اليومية.','Edit layout':'تعديل المخطط',
+'Tenant (name TBD)':'مستأجر (الاسم لاحقاً)','Bangladeshi':'البنغالي','Abu Hani':'أبو هاني','Muhammad':'محمد','Omar':'عمر',
+'Tenant profile':'ملف المستأجر','Unit':'الوحدة','Notes':'ملاحظات','Change photo':'تغيير الصورة','Add photo':'إضافة صورة','Profile photo':'صورة المستأجر',
+'Leaking pipe':'تسريب أنابيب','Broken window':'نافذة مكسورة','Add issue':'إضافة مشكلة','New issue':'مشكلة جديدة','Open':'مفتوحة','In Progress':'قيد التنفيذ','Completed':'مكتملة','Est.':'تقدير','Photos of the problem':'صور المشكلة','Status':'الحالة','Issue':'المشكلة','Place':'المكان',
+'Example breakdown':'مثال على التفصيل','September rent':'إيجار سبتمبر','October rent':'إيجار أكتوبر','Old debt 2025':'دين قديم 2025','Repair charge':'رسوم إصلاح','Total':'المجموع','Payment':'دفعة',
+'Plumber':'سبّاك','Electricity':'كهرباء','Paint':'دهان','Add expense':'إضافة مصروف',
+'This year':'هذه السنة','All time':'كل الفترات','Own rent due':'الإيجار المستحق لنا','Own expenses':'مصاريفنا','Net income':'صافي الدخل','Money collected for others is excluded from family income.':'المال المحصّل لآخرين لا يدخل في دخل العائلة.',
+'Share Data Only':'مشاركة البيانات فقط','Share Data + Photos':'مشاركة البيانات + الصور','Restore Data':'استعادة البيانات','Language':'اللغة','Night mode':'الوضع الليلي','Internet permission':'إذن الإنترنت','None':'لا يوجد','On':'مفعّل','Off':'متوقف',
+'Payment recorded':'تم تسجيل الدفعة','Handover saved':'تم حفظ التسليم','Opens a form in the real app':'تفتح هنا شاشة تعديل في التطبيق الحقيقي','Photo added':'تمت إضافة الصورة','Light':'نهاري','Dark':'ليلي'
+};
+let lang='ar',theme='light';
+try{lang=localStorage.getItem('lang')||'ar';theme=localStorage.getItem('theme')||'light'}catch(e){}
+const t=s=>lang=='ar'&&AR[s]?AR[s]:s;
+const $=s=>document.querySelector(s);
+
+const U=[
+ {id:0,b:'Building 1',fl:'Ground Floor',name:'Rented house',tenant:'Tenant (name TBD)',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:2,Daughters:1},rent:300,paid:300,debt:0,photos:[],avatar:null},
+ {id:1,b:'Main Building',fl:'Ground Floor',name:"House before Grandmother's",tenant:'Tenant (name TBD)',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:1,Daughters:0},rent:250,paid:100,debt:600,photos:[],avatar:null},
+ {id:2,b:'Main Building',fl:'First Floor',name:'Rented house',tenant:'Tenant (name TBD)',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:0,Daughters:2},rent:350,paid:0,debt:1200,photos:[],avatar:null},
+ {id:3,b:'Main Building',fl:'Second Floor',name:'North',tenant:'Tenant (name TBD)',phone:'',hh:'Men',cnt:{Men:3},rent:120,paid:120,debt:0,photos:[],avatar:null},
+ {id:4,b:'Main Building',fl:'Second Floor',name:'Middle',tenant:'Tenant (name TBD)',phone:'',hh:'Men',cnt:{Men:4},rent:140,paid:140,debt:0,photos:[],avatar:null},
+ {id:5,b:'Main Building',fl:'Second Floor',name:'Right',tenant:'Tenant (name TBD)',phone:'',hh:'Men',cnt:{Men:2},rent:100,paid:50,debt:0,photos:[],avatar:null},
+ {id:6,b:'Main Building',fl:'Second Floor',name:'Near Stairs',tenant:'Tenant (name TBD)',phone:'',hh:'Women',cnt:{Women:2},rent:100,paid:0,debt:300,photos:[],avatar:null},
+ {id:7,b:'Building Next to the Garden',fl:'Ground Floor',name:'Rented unit',tenant:'Bangladeshi',phone:'',hh:'Men',cnt:{Men:5},rent:200,paid:200,debt:0,photos:[],avatar:null},
+ {id:8,b:'Building Next to the Garden',fl:'First Floor',name:'Rented unit',tenant:'Abu Hani',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:3,Daughters:1},rent:300,paid:150,debt:2250,photos:[],avatar:null},
+ {id:9,b:'Building Next to the Garden',fl:'Second Floor',name:'Rented unit',tenant:'Tenant (name TBD)',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:1,Daughters:1},rent:300,paid:0,debt:0,photos:[],avatar:null},
+ {id:10,b:'Building 4',fl:'Ground Floor',name:'House 1',tenant:'Tenant (name TBD)',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:2,Daughters:0},rent:500,paid:500,debt:0,for:'Muhammad',photos:[],avatar:null},
+ {id:11,b:'Building 4',fl:'Ground Floor',name:'House 2',tenant:'Tenant (name TBD)',phone:'',hh:'Family',cnt:{Father:1,Mother:1,Sons:0,Daughters:3},rent:400,paid:400,debt:0,for:'Omar',photos:[],avatar:null}
+];
+const P={Muhammad:{col:3000,hand:2500},Omar:{col:2000,hand:1500}};
+const M=[{id:0,title:'Leaking pipe',place:'Main Building · Right',status:'Open',est:80,photos:[]},{id:1,title:'Broken window',place:'Building 4 · House 2',status:'In Progress',est:40,photos:[]}];
+const total=u=>Object.values(u.cnt).reduce((a,b)=>a+b,0);
+const ICON={Father:'👨',Mother:'👩',Sons:'👦',Daughters:'👧',Men:'🧔',Women:'🧕'};
+let tab='home',stack=[];
+
+function toast(s){const e=$('#toast');e.textContent=t(s);e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
+function go(fn,title){stack.push({fn,title});render()}
+function goBack(){stack.pop();render()}
+function setTab(x){tab=x;stack=[];render()}
+function toggleLang(){lang=lang=='ar'?'en':'ar';try{localStorage.setItem('lang',lang)}catch(e){}render(true)}
+function toggleTheme(){theme=theme=='dark'?'light':'dark';try{localStorage.setItem('theme',theme)}catch(e){}render(true)}
+const TITLES={home:'Home',units:'My Rentals',rent:'Rent',others:'Collected for Others',more:'More'};
+function render(keep){
+ const top=stack[stack.length-1],sc=$('#main').scrollTop;
+ const h=document.documentElement;h.lang=lang;h.dir=lang=='ar'?'rtl':'ltr';h.dataset.theme=theme;
+ $('#title').textContent=t(top?top.title:TITLES[tab]);
+ $('#back').style.display=top?'block':'none';$('#back').textContent=lang=='ar'?'→':'←';
+ $('#lng').textContent=lang=='ar'?'EN':'ع';$('#thm').textContent=theme=='dark'?'☀️':'🌙';
+ $('#main').innerHTML=top?top.fn():V[tab]();
+ $('#main').scrollTop=keep?sc:0;
+ $('#nav').innerHTML=[['home','🏠','Home'],['units','🔑','Rentals'],['rent','💰','Rent'],['others','💵','For Others'],['more','☰','More']].map(([k,i,l])=>`<button class="${tab==k?'on':''}" onclick="setTab('${k}')"><span>${i}</span>${t(l)}</button>`).join('');
+}
+const st=(n,l,c='')=>`<div class="card stat"><div class="n ${c}">${n}</div><div class="l">${t(l)}</div></div>`;
+const own=()=>U.filter(u=>!u.for);
+const status=u=>u.paid>=u.rent?['Paid','paid']:u.paid>0?['Partial','part']:['Unpaid','unpaid'];
+const peopleHtml=u=>`<div class="people">${Object.entries(u.cnt).filter(([k,v])=>v>0).map(([k,v])=>`<span>${ICON[k]} ${v} ${t(k)}</span>`).join('')}</div>`;
+const avatar=(u,big)=>`<div class="av ${big?'big':''}">${u.avatar?`<img src="${u.avatar}">`:(t(u.tenant).trim()[0]||'?')}</div>`;
+const photoGrid=(arr,kind,id)=>`<div class="photos">${arr.length?arr.map((s,i)=>`<div class="ph"><img src="${s}"><b onclick="rmPhoto('${kind}',${id},${i})">✕</b></div>`).join(''):`<div class="empty">📷 ${t('No photos yet')}</div>`}</div>
+ <label class="btn alt">📷 ${t('Add photos')}<input type="file" accept="image/*" multiple onchange="addPhotos('${kind}',${id},this)"></label>`;
+const target=(k,id)=>k=='unit'?U[id].photos:k=='maint'?M[id].photos:null;
+function addPhotos(kind,id,inp){const arr=target(kind,id);[...inp.files].forEach(f=>arr.push(URL.createObjectURL(f)));toast('Photo added');render(true)}
+function rmPhoto(kind,id,i){target(kind,id).splice(i,1);render(true)}
+function setAvatar(id,inp){if(inp.files[0]){U[id].avatar=URL.createObjectURL(inp.files[0]);render(true)}}
+
+const V={
+home(){
+ const exp=own().reduce((a,u)=>a+u.rent,0),col=own().reduce((a,u)=>a+u.paid,0);
+ const old=U.reduce((a,u)=>a+u.debt,0),owed=Object.values(P).reduce((a,p)=>a+p.col-p.hand,0),ppl=U.reduce((a,u)=>a+total(u),0);
+ const open=M.filter(m=>m.status!='Completed').length;
+ return `<div class="grid">${st(U.length,'Rented units')}${st(ppl,'People living in them')}
+ ${st('$'+exp,'Rent this month')}${st('$'+col,'Collected','green')}${st('$'+(exp-col),'Not paid yet','red')}${st('$'+old,'Old debts','red')}
+ ${st('$'+owed,'To hand over','amber')}<div class="card stat tap" onclick="go(maint,'Maintenance')"><div class="n amber">${open} ${t('open')}</div><div class="l">${t('Maintenance')}</div></div></div>
+ <h2>${t('Quick Actions')}</h2>
+ <button class="btn" onclick="setTab('rent')">➕ ${t('Add Rent Payment')}</button>
+ <button class="btn alt" onclick="go(debts,'Debts')">➕ ${t('Add Debt')}</button>
+ <button class="btn alt" onclick="setTab('others')">↗ ${t('Record Handover')}</button>
+ <div class="note">${t('Sample data only. Family units are not listed. Rent collected for others is not counted in "Rent this month".')}</div>`},
+units(){
+ let out='',last='';
+ U.forEach(u=>{
+  if(u.b!=last){out+=`<h2>${t(u.b)}</h2>`;last=u.b}
+  const s=status(u);
+  out+=`<div class="card tap" onclick="openUnit(${u.id})">
+   <div class="row" style="padding-top:0"><b>${t(u.fl)} · ${t(u.name)}</b><span class="tag ${s[1]}">${t(s[0])}</span></div>
+   <div class="tl">${avatar(u)}<div><div>${t(u.tenant)}</div><span class="tag hh">${t(u.hh)}</span></div></div>
+   ${peopleHtml(u)}
+   <div class="sub" style="margin-top:6px">${t('Rent')} $${u.rent}${u.for?' · '+t('for')+' '+t(u.for):''}${u.debt?` · <span class="red">${t('Old debt')} $${u.debt}</span>`:''}${u.photos.length?` · 📷 ${u.photos.length}`:''}</div></div>`;
+ });
+ return out+`<button class="btn" onclick="toast('Opens a form in the real app')">➕ ${t('Add rental unit')}</button>`},
+rent(){
+ return `<span class="chip on">${t('October 2026')}</span><span class="chip">${t('September')}</span><span class="chip">${t('Year')}</span>`+U.map(u=>{
+  const s=status(u),left=u.rent-u.paid;
+  return `<div class="card"><div class="row" style="padding-top:0"><b>${t(u.b)} · ${t(u.name)}</b><span class="tag ${s[1]}">${t(s[0])}</span></div>
+  <div class="sub">${t(u.tenant)}${u.for?' · '+t('for')+' '+t(u.for):''}</div>
+  <div class="bar"><i style="width:${u.paid/u.rent*100}%"></i></div>
+  <div class="row"><span>${t('Paid')} $${u.paid} ${t('of')} $${u.rent}</span>${left?`<span class="red">${t('Left')} $${left}</span>`:`<span class="green">${t('Done')}</span>`}</div>
+  ${left?`<button class="btn" onclick="pay(${u.id})">${t('Add payment')}</button>`:''}</div>`}).join('')},
+others(){
+ return Object.entries(P).map(([n,p])=>`<div class="card"><b style="font-size:21px">${t(n)}</b>
+ <div class="row"><span>${t('Collected')}</span><span>$${p.col}</span></div><div class="row"><span>${t('Handed over')}</span><span>$${p.hand}</span></div><div class="row"><b>${t('Remaining')}</b><b class="amber">$${p.col-p.hand}</b></div>
+ <button class="btn" onclick="P['${n}'].hand+=100;toast('Handover saved');render(true)">${t('Record handover')} ($100)</button></div>`).join('')+`
+ <h2>${t('History')}: ${t('Building 4')}, ${t('House 1')}</h2><div class="card"><table><tr><th>${t('Month')}</th><th>${t('Amount')}</th><th>${t('For')}</th></tr><tr><td>${t('January')}</td><td>$500</td><td>${t('Muhammad')}</td></tr><tr><td>${t('February')}</td><td>$500</td><td>${t('Omar')}</td></tr><tr><td>${t('March')}</td><td>$500</td><td>${t('No one')}</td></tr></table></div>
+ <div class="note">${t('Changing who it is collected for never changes past months.')}</div>
+ <button class="btn alt" onclick="toast('Opens a form in the real app')">➕ ${t('Add person')}</button>`},
+more(){return `<div class="card">${[['👥','Tenants','tenants'],['🔧','Maintenance','maint'],['📕','Debts','debts'],['🧾','Expenses','expenses'],['📊','Reports','reports'],['🏗️','Building layout','layout'],['⚙️','Settings','settings']].map(([i,l,f])=>`<div class="row tap" style="font-size:19px" onclick="go(${f},'${l}')">${i} ${t(l)}<span>›</span></div>`).join('')}</div>
+ <input class="f" placeholder="${t('Search tenant, phone, unit…')}">`}
+};
+function openUnit(id){go(()=>unitDetail(id),U[id].name)}
+function unitDetail(id){const u=U[id],s=status(u);
+ return `<div class="card"><b style="font-size:21px">${t(u.name)}</b><div class="sub">${t(u.b)} · ${t(u.fl)}</div></div>
+ <div class="card"><b>${t('Tenant / Contact')}</b>
+  <div class="tl tap" style="margin:10px 0" onclick="openTenant(${id})">${avatar(u)}<div style="flex:1"><div><b>${t(u.tenant)}</b></div><div class="sub">📞 ${u.phone||t('Phone')+': —'}</div></div><span>›</span></div>
+  <button class="btn alt" onclick="openTenant(${id})">${t('Open profile')}</button></div>
+ <div class="card"><b>${t('Who lives here')}</b>
+  <div class="row"><span>${t('Type')}</span><span class="tag hh">${t(u.hh)}</span></div>
+  <div class="row"><span>${t('Total people')}</span><b>${total(u)}</b></div>
+  ${peopleHtml(u)}
+  <button class="btn alt" onclick="toast('Opens a form in the real app')">✏️ ${t('Change residents')}</button></div>
+ <div class="card"><b>${t('Rent')}</b>
+  <div class="row"><span>${t('Monthly')}</span><span>$${u.rent}</span></div>
+  <div class="row"><span>${t('This month')}</span><span class="tag ${s[1]}">${t(s[0])}</span></div>
+  <div class="row"><span>${t('Old debt')}</span><span class="${u.debt?'red':''}">$${u.debt}</span></div>
+  ${u.for?`<div class="row"><span>${t('Collected for')}</span><b>${t(u.for)}</b></div>`:''}</div>
+ <div class="card"><b>${t('Room photos')}</b>${photoGrid(u.photos,'unit',id)}</div>
+ <button class="btn" onclick="toast('Opens a form in the real app')">✏️ ${t('Edit')}</button>`}
+function openTenant(id){go(()=>tenantProfile(id),'Tenant profile')}
+function tenantProfile(id){const u=U[id];
+ return `<div class="card" style="text-align:center">${avatar(u,true)}
+  <label class="btn alt" style="display:inline-block;width:auto;padding:10px 18px">📷 ${t(u.avatar?'Change photo':'Add photo')}<input type="file" accept="image/*" onchange="setAvatar(${id},this)"></label></div>
+ <div class="card"><label class="lb">${t('Name')}</label><input class="f" value="${t(u.tenant)}" oninput="U[${id}].tenant=this.value">
+  <label class="lb">${t('Phone')}</label><input class="f" type="tel" dir="ltr" placeholder="+___ __ ___ ___" value="${u.phone}" oninput="U[${id}].phone=this.value">
+  <label class="lb">${t('Phone 2')}</label><input class="f" type="tel" dir="ltr" placeholder="+___ __ ___ ___">
+  <label class="lb">${t('Notes')}</label><input class="f"></div>
+ <div class="card"><div class="row"><span>${t('Unit')}</span><b>${t(u.b)} · ${t(u.name)}</b></div>
+  <div class="row"><span>${t('Type')}</span><span class="tag hh">${t(u.hh)}</span></div>
+  <div class="row"><span>${t('Total people')}</span><b>${total(u)}</b></div>${peopleHtml(u)}</div>`}
+function tenants(){return U.map(u=>`<div class="card tap tl" onclick="openTenant(${u.id})">${avatar(u)}<div style="flex:1"><b>${t(u.tenant)}</b><div class="sub">${t(u.b)} · ${t(u.name)}</div><div class="sub">📞 ${u.phone||'—'}</div></div><span>›</span></div>`).join('')}
+function pay(id){const u=U[id],a=Math.min(100,u.rent-u.paid);u.paid+=a;toast('Payment recorded');render(true)}
+function debts(){const d=U.filter(u=>u.debt);
+ return d.map(u=>`<div class="card"><div class="row" style="padding-top:0"><b>${t(u.b)} · ${t(u.name)}</b><b class="red">$${u.debt}</b></div><div class="sub">${t(u.tenant)}</div></div>`).join('')+`
+ <div class="card"><b>${t('Example breakdown')}</b><table><tr><td>${t('September rent')}</td><td>$500</td></tr><tr><td>${t('October rent')}</td><td>$500</td></tr><tr><td>${t('Old debt 2025')}</td><td>$1,200</td></tr><tr><td>${t('Repair charge')}</td><td>$150</td></tr><tr><td><b>${t('Total')}</b></td><td><b>$2,350</b></td></tr><tr><td>${t('Payment')}</td><td class="green">− $1,000</td></tr><tr><td><b>${t('Remaining')}</b></td><td class="red"><b>$1,350</b></td></tr></table></div>
+ <button class="btn" onclick="toast('Opens a form in the real app')">➕ ${t('Add Debt')}</button>`}
+function maint(){return M.map(m=>`<div class="card tap" onclick="openIssue(${m.id})"><div class="row" style="padding-top:0"><b>${t(m.title)}</b><span class="tag ${m.status=='Completed'?'paid':m.status=='Open'?'unpaid':'part'}">${t(m.status)}</span></div><div class="sub">${m.place.split(' · ').map(t).join(' · ')}</div><div class="sub">${t('Est.')} $${m.est}${m.photos.length?' · 📷 '+m.photos.length:''}</div></div>`).join('')+`<button class="btn" onclick="M.push({id:M.length,title:'New issue',place:'Main Building',status:'Open',est:0,photos:[]});openIssue(M.length-1)">➕ ${t('Add issue')}</button>`}
+function openIssue(id){go(()=>issue(id),'Maintenance')}
+function issue(id){const m=M[id];
+ return `<div class="card"><b style="font-size:21px">${t(m.title)}</b><div class="sub">${m.place.split(' · ').map(t).join(' · ')}</div>
+  <div class="row"><span>${t('Status')}</span><span class="tag ${m.status=='Completed'?'paid':m.status=='Open'?'unpaid':'part'}">${t(m.status)}</span></div>
+  <div class="row"><span>${t('Est.')}</span><span>$${m.est}</span></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${['Open','In Progress','Completed'].map(s=>`<span class="chip ${m.status==s?'on':''}" onclick="M[${id}].status='${s}';render(true)">${t(s)}</span>`).join('')}</div></div>
+ <div class="card"><b>${t('Photos of the problem')}</b>${photoGrid(m.photos,'maint',id)}</div>`}
+function expenses(){return `<div class="card"><table><tr><td>${t('Plumber')}</td><td>$60</td></tr><tr><td>${t('Electricity')}</td><td>$120</td></tr><tr><td>${t('Paint')}</td><td>$85</td></tr></table></div><button class="btn" onclick="toast('Opens a form in the real app')">➕ ${t('Add expense')}</button>`}
+function reports(){return `<span class="chip on">${t('This month')}</span><span class="chip">${t('This year')}</span><span class="chip">${t('All time')}</span>
+ <div class="card"><table><tr><td>${t('Own rent due')}</td><td>$2,100</td></tr><tr><td>${t('Collected')}</td><td class="green">$1,200</td></tr><tr><td>${t('Own expenses')}</td><td>− $265</td></tr><tr><td><b>${t('Net income')}</b></td><td><b>$935</b></td></tr></table></div>
+ <div class="note">${t('Money collected for others is excluded from family income.')}</div>`}
+function layout(){
+ const L={'Building 1':{'Ground Floor':["Father's shop (family)",'Rented house'],'First Floor':["Uncle's house (family)"],'Second Floor':["Cousin's house (family)"]},
+ 'Main Building':{'Ground Floor':["Grandmother's house (family)","House before Grandmother's"],'First Floor':['Family house (family)',"Father's house (family)",'Rented house'],'Second Floor':['North','Middle','Right','Near Stairs'],'Third Floor':['Not owned by us']},
+ 'Building Next to the Garden':{'Ground Floor':['Rented unit'],'First Floor':['Rented unit'],'Second Floor':['Rented unit']},
+ 'Building 4':{'Ground Floor':['House 1','House 2'],'Roof':['Not a living unit']}};
+ const nm=s=>s.endsWith(' (family)')?t(s.replace(' (family)',''))+' ('+t('family')+')':t(s);
+ return `<div class="note">${t('Kept aside for later (for example a 3D view). Not used in daily screens.')}</div>`+Object.entries(L).map(([b,f])=>`<div class="card"><b>${t(b)}</b>${Object.entries(f).map(([n,us])=>`<div class="row"><span>${t(n)}</span><span class="sub" style="text-align:end">${us.map(nm).join(' · ')}</span></div>`).join('')}</div>`).join('')+`<button class="btn alt" onclick="toast('Opens a form in the real app')">✏️ ${t('Edit layout')}</button>`}
+function settings(){return `<div class="card"><div class="row"><span>${t('Language')}</span><span><span class="chip ${lang=='ar'?'on':''}" onclick="lang='ar';toggleLang();toggleLang()">العربية</span><span class="chip ${lang=='en'?'on':''}" onclick="lang='en';toggleLang();toggleLang()">English</span></span></div>
+ <div class="row"><span>${t('Night mode')}</span><span><span class="chip ${theme=='dark'?'on':''}" onclick="toggleTheme()">${t(theme=='dark'?'On':'Off')}</span></span></div>
+ <div class="row"><span>${t('Internet permission')}</span><b class="green">${t('None')}</b></div></div>
+ <button class="btn" onclick="toast('Opens a form in the real app')">📤 ${t('Share Data Only')}</button><button class="btn" onclick="toast('Opens a form in the real app')">📤 ${t('Share Data + Photos')}</button><button class="btn alt" onclick="toast('Opens a form in the real app')">📥 ${t('Restore Data')}</button>`}
+render();
+</script>
+</body>
+</html>

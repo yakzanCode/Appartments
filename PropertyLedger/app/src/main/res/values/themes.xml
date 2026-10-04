@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.Ledger" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#1F5F5B</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+    </style>
+</resources>
